@@ -1,4 +1,8 @@
+
+import serial
+import time
 import paho.mqtt.client as mqtt
+import string
 
 def on_connect(client, userdata, flags, rc): # func for making connection
 	print("Connected to MQTT")
@@ -6,7 +10,16 @@ def on_connect(client, userdata, flags, rc): # func for making connection
 	
 	client.subscribe("ifn649")
 def on_message(client, userdata, msg): # Func for Sending msg
-	print(msg.topic+" "+str(msg.payload))
+	s=''.join(map(chr,msg.payload))
+	m= float(s)
+	if m >= 30:
+		print("LED STATUS: ON"+"|"+"TEMPRATURE is : "+ s +"C")
+		ser.write(str.encode('LLED_ON'))
+	else:
+		print("LED STATUS: OFF"+ "|" + "TEMPRATURE is :" + s + "C")
+		ser.write(str.encode('LLED_OFF'))
+	
+
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
